@@ -1,0 +1,309 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+  <div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Profile Sidebar -->
+        <div class="lg:col-span-1">
+          <div class="bg-white/5 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/10 overflow-hidden">
+            <!-- Profile Header -->
+            <div class="bg-gradient-to-br from-blue-600/20 to-purple-600/20 p-8 text-center">
+              {% if mentee_profile.profile_picture %}
+                <img src="{{ mentee_profile.profile_picture.url }}" alt="Mentee Profile Picture" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white/20 shadow-xl object-cover" />
+              {% else %}
+                <div class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white/20 shadow-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                  <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                  </svg>
+                </div>
+              {% endif %}
+
+              <h2 class="text-3xl font-bold text-white mb-1">{{ mentee_profile.user.username }}</h2>
+              <p class="text-gray-300 text-sm">{{ mentee_profile.user.email }}</p>
+            </div>
+
+            <div class="p-6 space-y-6">
+              <!-- Contact Information -->
+              <div class="space-y-3">
+                <div class="flex items-start space-x-3 text-sm">
+                  <svg class="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                  <span class="text-gray-300">{{ mentee_profile.location|default:'Location not specified' }}</span>
+                </div>
+                <div class="flex items-start space-x-3 text-sm">
+                  <svg class="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9.5a18.03 18.03 0 01-5.694-4.5M7.5 14.5a18.03 18.03 0 005.694 4.5M12 12a2.25 2.25 0 00-2.25 2.25m2.25-2.25a2.25 2.25 0 012.25 2.25M12 12a2.25 2.25 0 00-2.25-2.25M12 12a2.25 2.25 0 012.25-2.25"></path>
+                  </svg>
+                  <span class="text-gray-300">{{ formatted_languages }}</span>
+                </div>
+              </div>
+
+              <!-- Document Actions -->
+              {% if mentee_profile.cv_file or mentee_profile.cv_analysis_feedback %}
+                <div class="flex gap-2">
+                  {% if mentee_profile.cv_file %}
+                    <a href="{{ mentee_profile.cv_file.url }}" target="_blank" class="flex-1 inline-flex items-center justify-center px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-sm font-medium rounded-lg transition-all duration-200 shadow-lg shadow-blue-500/30">
+                      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                      </svg>CV
+                    </a>
+                  {% endif %}
+                  {% if mentee_profile.cv_analysis_feedback %}
+                    <a href="{{ mentee_profile.cv_analysis_feedback.url }}" target="_blank" class="flex-1 inline-flex items-center justify-center px-4 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white text-sm font-medium rounded-lg transition-all duration-200 shadow-lg shadow-purple-500/30">
+                      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                      </svg>Analysis
+                    </a>
+                  {% endif %}
+                </div>
+              {% endif %}
+
+              <!-- Bio Section -->
+              <div class="border-t border-white/10 pt-6">
+                <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">About</h3>
+                {% if mentee_profile.bio %}
+                  <p class="text-gray-300 text-sm leading-relaxed">{{ mentee_profile.bio }}</p>
+                {% else %}
+                  <p class="text-gray-500 text-sm italic">No biography provided yet.</p>
+                {% endif %}
+              </div>
+
+              <!-- Mentor Card -->
+              <div class="border-t border-white/10 pt-6">
+                <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Your Mentor</h3>
+                <div class="bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-xl p-4 border border-white/10">
+                  <div class="flex items-center space-x-4">
+                    <div class="flex-shrink-0">
+                      {% if mentor.profile_picture %}
+                        <img src="{{ mentor.profile_picture.url }}" alt="Mentor Profile" class="w-14 h-14 rounded-full object-cover border-2 border-white/20" />
+                      {% else %}
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                          </svg>
+                        </div>
+                      {% endif %}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-white font-semibold truncate">{{ request.user.username }}</p>
+                      <p class="text-gray-400 text-xs truncate">{{ request.user.email }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-6">
+          <!-- Professional Profile -->
+          <div class="bg-white/5 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/10 p-8">
+            <div class="flex items-center mb-6">
+              <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mr-4">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+              </div>
+              <h3 class="text-2xl font-bold text-white">Professional Profile</h3>
+            </div>
+
+            <div class="space-y-6">
+              <div>
+                <h4 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">Background</h4>
+                <p class="text-gray-300 leading-relaxed">{{ mentee_profile.professional_career|default:'No professional background provided yet.' }}</p>
+              </div>
+              <div class="border-t border-white/10 pt-6">
+                <h4 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">Career Goals</h4>
+                <p class="text-gray-300 leading-relaxed">{{ mentee_profile.professional_goal|default:'No career goals specified yet.' }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upcoming Meetings -->
+          <div class="bg-white/5 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/10 p-8">
+            <div class="flex items-center mb-6">
+              <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center mr-4">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+              </div>
+              <h3 class="text-2xl font-bold text-white">Scheduled Meetings</h3>
+            </div>
+
+            {% if reserved_slots %}
+              <div class="space-y-4">
+                {% for reserved in reserved_slots %}
+                  <div class="bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-xl p-6 border-l-4 border-green-500">
+                    <div class="flex items-start justify-between">
+                      <div class="flex-1">
+                        <div class="flex items-center space-x-3 mb-2">
+                          <h4 class="text-lg font-semibold text-white">Growth Strategy Session</h4>
+                          <span class="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-xs font-medium border border-green-500/30">Upcoming</span>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-3">Discuss scaling strategies and market expansion</p>
+                        <div class="flex items-center text-green-400 text-sm">
+                          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                          </svg>
+                          {{ reserved.start_time }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="bg-white/5 rounded-xl p-8 text-center border border-white/10">
+                <div class="w-16 h-16 bg-gray-700/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  </svg>
+                </div>
+                <p class="text-gray-400">No upcoming meetings scheduled</p>
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Tasks Overview -->
+          <div class="bg-white/5 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/10 p-8">
+            <div class="flex items-center mb-6">
+              <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center mr-4">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                </svg>
+              </div>
+              <h3 class="text-2xl font-bold text-white">Tasks & Progress</h3>
+            </div>
+
+            {% if tasks %}
+              <div class="space-y-4">
+                {% for task in tasks %}
+                  <div class="bg-gradient-to-r from-{% if task.is_done %}
+                      
+                      green
+
+                    {% else %}
+                      
+                      orange
+
+                    {% endif %}-500/10 to-{% if task.is_done %}
+                      
+                      emerald
+
+                    {% else %}
+                      
+                      red
+
+                    {% endif %}-500/10 rounded-xl p-6 border-l-4 border-{% if task.is_done %}
+                      
+                      green
+
+                    {% else %}
+                      
+                      orange
+
+                    {% endif %}-500">
+                    <div class="flex items-start justify-between">
+                      <div class="flex-1">
+                        <div class="flex items-center space-x-3 mb-2">
+                          <h4 class="text-lg font-semibold text-white">{{ task.title }}</h4>
+                          {% if task.is_done %}
+                            <span class="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-xs font-medium border border-green-500/30 flex items-center">
+                              <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                              </svg>Completed
+                            </span>
+                          {% else %}
+                            <span class="bg-orange-500/20 text-orange-400 px-3 py-1 rounded-full text-xs font-medium border border-orange-500/30 flex items-center">
+                              <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                              </svg>In Progress
+                            </span>
+                          {% endif %}
+                        </div>
+                        <p class="text-gray-400 text-sm mb-3">{{ task.description }}</p>
+                        <div class="flex items-center text-gray-500 text-sm">
+                          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                          </svg>Due: {{ task.due_date }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="bg-white/5 rounded-xl p-8 text-center border border-white/10">
+                <div class="w-16 h-16 bg-gray-700/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                  </svg>
+                </div>
+                <p class="text-gray-400">No tasks assigned yet</p>
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Meeting Recordings -->
+          <div class="bg-white/5 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/10 p-8">
+            <div class="flex items-center mb-6">
+              <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center mr-4">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+              </div>
+              <h3 class="text-2xl font-bold text-white">Session Recordings</h3>
+            </div>
+
+            {% if recordings %}
+              <div class="space-y-4">
+                {% for recording in recordings %}
+                  <div class="bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-xl p-6 border-l-4 border-purple-500">
+                    <div class="flex items-start justify-between">
+                      <div class="flex-1">
+                        <h4 class="text-lg font-semibold text-white mb-2">{{ recording.title }}</h4>
+                        <div class="flex items-center text-purple-400 text-sm mb-4">
+                          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                          </svg>
+                          {{ recording.uploaded_at }}
+                        </div>
+                      </div>
+                      <div class="flex flex-col space-y-2 ml-4">
+                        <a href="{{ recording.video.url }}" target="_blank" class="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-sm font-medium rounded-lg transition-all duration-200 shadow-lg shadow-purple-500/30">
+                          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                          </svg>Watch
+                        </a>
+                        <a href="{{ recording.video.url }}" download class="inline-flex items-center justify-center px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm font-medium rounded-lg transition-all duration-200 border border-white/20">
+                          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                          </svg>Download
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="bg-white/5 rounded-xl p-8 text-center border border-white/10">
+                <div class="w-16 h-16 bg-gray-700/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                  </svg>
+                </div>
+                <p class="text-gray-400">No recordings available yet</p>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+{% endblock %}

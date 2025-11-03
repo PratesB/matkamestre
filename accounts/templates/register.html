@@ -1,0 +1,338 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+<style>
+/* Custom scrollbar for language container */
+.max-h-64::-webkit-scrollbar {
+    width: 6px;
+}
+
+.max-h-64::-webkit-scrollbar-track {
+    background: #374151;
+    border-radius: 3px;
+}
+
+.max-h-64::-webkit-scrollbar-thumb {
+    background: #6B7280;
+    border-radius: 3px;
+}
+
+.max-h-64::-webkit-scrollbar-thumb:hover {
+    background: #9CA3AF;
+}
+
+/* Smooth transitions for language options */
+.language-option {
+    transition: all 0.2s ease-in-out;
+}
+
+.language-option:hover {
+    transform: translateX(2px);
+}
+
+/* Custom checkbox animations */
+.checkbox-custom {
+    transition: all 0.2s ease-in-out;
+}
+
+.checkmark {
+    transition: all 0.15s ease-in-out;
+}
+
+/* Badge hover effects */
+.selected-language-badge:hover {
+    transform: scale(1.05);
+}
+</style>
+{% endblock head %}
+
+
+{% block navbar %}{% endblock navbar %}
+
+{% block body %}
+
+<div class="flex min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <!-- Register Form -->
+    <div class="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-35 relative">
+        <!-- Background Effect-->
+        <div class="absolute inset-0 bg-gradient-to-r from-slate-900/95 to-slate-800/90 lg:bg-gradient-to-r lg:from-slate-900/98 lg:to-transparent"></div>
+        
+        <div class="mx-auto w-full max-w-sm lg:w-96 relative z-10">
+            <!-- Header and LOGO-->
+            <div class="text-center lg:text-left">
+                <img class="h-22 w-auto mx-auto mb-6 rounded-full" src="{%static 'img/logo.png'%}" alt="MatkaMestre Logo">
+                
+                <h1 class="text-3xl font-bold tracking-tight text-white mb-2">
+                    Create your account
+                </h1>
+                <p class="text-slate-400 text-base">
+                    Join our community of Coaches and Jobseekers
+                </p>
+
+            <div class="mt-6">
+                
+                {% if messages %}
+
+                    {% for message in messages %}
+
+                    <div class="flex items-center p-4 mb-4 text-sm text-{{message.tags}}-800 rounded-lg bg-{{message.tags}}-50 dark:bg-gray-800 dark:text-{{message.tags}}-400" role="alert">
+                        <svg class="shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                        </svg>
+                        <span class="sr-only">Info</span>
+                        <div>
+                            <span class="font-medium">{{message}}</span>
+                        </div>
+                    </div>
+
+                    {% endfor %}   
+
+                {% endif %}
+                    
+            </div>
+                
+                
+            </div>
+
+            <!-- Form -->
+            <div class="mt-8">
+                <form action="" method="POST" class="space-y-6"> {% csrf_token %}
+                    <!-- Username -->
+                    <div class="group">
+                        <label for="username" class="block text-sm font-medium text-slate-200 mb-2">
+                            Username
+                        </label>
+                        <div class="relative">
+                            <input 
+                                type="text" 
+                                name="username" 
+                                id="username"
+                                required 
+                                class="block w-full rounded-xl bg-slate-800/50 border border-slate-600/50 px-4 py-3 text-white placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:bg-slate-800/80 transition-all duration-200 group-hover:border-slate-500/70"
+                                placeholder="Enter your username"
+                            >
+                            <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500/0 to-purple-500/0 group-hover:from-indigo-500/5 group-hover:to-purple-500/5 transition-all duration-200 pointer-events-none"></div>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="group">
+                        <label for="email" class="block text-sm font-medium text-slate-200 mb-2">
+                            Email
+                        </label>
+                        <div class="relative">
+                            <input 
+                                type="email" 
+                                name="email" 
+                                id="email"
+                                required 
+                                class="block w-full rounded-xl bg-slate-800/50 border border-slate-600/50 px-4 py-3 text-white placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:bg-slate-800/80 transition-all duration-200 group-hover:border-slate-500/70"
+                                placeholder="your@email.com"
+                            >
+                            <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500/0 to-purple-500/0 group-hover:from-indigo-500/5 group-hover:to-purple-500/5 transition-all duration-200 pointer-events-none"></div>
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="group">
+                        <label for="password" class="block text-sm font-medium text-slate-200 mb-2">
+                            Password
+                        </label>
+                        <div class="relative">
+                            <input 
+                                type="password" 
+                                name="password" 
+                                id="password"
+                                required 
+                                class="block w-full rounded-xl bg-slate-800/50 border border-slate-600/50 px-4 py-3 text-white placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:bg-slate-800/80 transition-all duration-200 group-hover:border-slate-500/70"
+                                placeholder="Create a secure password"
+                            >
+                            <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500/0 to-purple-500/0 group-hover:from-indigo-500/5 group-hover:to-purple-500/5 transition-all duration-200 pointer-events-none"></div>
+                        </div>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="group">
+                        <label for="confirm_password" class="block text-sm font-medium text-slate-200 mb-2">
+                            Confirm Password
+                        </label>
+                        <div class="relative">
+                            <input 
+                                type="password" 
+                                name="confirm_password" 
+                                id="confirm_password"
+                                required 
+                                class="block w-full rounded-xl bg-slate-800/50 border border-slate-600/50 px-4 py-3 text-white placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:bg-slate-800/80 transition-all duration-200 group-hover:border-slate-500/70"
+                                placeholder="Enter password again"
+                            >
+                            <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500/0 to-purple-500/0 group-hover:from-indigo-500/5 group-hover:to-purple-500/5 transition-all duration-200 pointer-events-none"></div>
+                        </div>
+                    </div>
+
+                    <!-- Professional Career -->
+                    <div class="group">
+                        <label for="professional_career" class="block text-sm font-medium text-slate-200 mb-2">
+                            Professional Background
+                        </label>
+                        <div class="relative">
+                            <textarea 
+                                name="professional_career" 
+                                id="professional_career"
+                                rows="4"
+                                class="block w-full rounded-xl bg-slate-800/50 border border-slate-600/50 px-4 py-3 text-white placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:bg-slate-800/80 transition-all duration-200 group-hover:border-slate-500/70"
+                                placeholder="Briefly describe your professional experience..."
+                            ></textarea>
+                            <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500/0 to-purple-500/0 group-hover:from-indigo-500/5 group-hover:to-purple-500/5 transition-all duration-200 pointer-events-none"></div>
+                        </div>
+                    </div>
+
+                    <!-- Languages -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-200 mb-2">
+                            Languages You Speak
+                        </label>
+                        <div class="bg-slate-800/50 border border-slate-600/50 rounded-xl p-4">
+                            <div id="selected-languages-display" class="mb-3 p-2 bg-slate-900/50 rounded-md border border-slate-700 min-h-[2.5rem] flex flex-wrap gap-2 items-center">
+                                <span id="no-languages-text" class="text-slate-400 text-sm">No languages selected</span>
+                            </div>
+                            <div class="max-h-64 overflow-y-auto pr-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                {% for code, name in language_choices %}
+                                <label class="language-option flex items-center p-2 hover:bg-slate-700/50 rounded-md cursor-pointer transition-colors">
+                                    <input type="checkbox" name="languages" value="{{ code }}" class="language-checkbox sr-only">
+                                    <div class="checkbox-custom w-4 h-4 border-2 border-slate-500 rounded mr-3 flex items-center justify-center flex-shrink-0">
+                                        <svg class="checkmark w-3 h-3 text-indigo-400 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </div>
+                                    <span class="text-white text-sm">{{ name }}</span>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <p class="mt-2 text-xs text-slate-500">
+                            Click to select multiple languages.
+                        </p>
+                    </div>
+
+                    <!-- Register Button -->
+                    <div class="pt-4">
+                        <button 
+                            type="submit" 
+                            class="group relative w-full flex justify-center items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-medium rounded-xl shadow-lg hover:shadow-indigo-500/25 transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 cursor-pointer"
+                        >
+                            <span class="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
+                            <span class="relative font-semibold tracking-wide">
+                                Create Account
+                            </span>
+                        </button>
+                    </div>
+
+                    <div class="mt-6 text-center lg:text-left">
+                    <p class="text-sm text-slate-400">
+                        Already have an account?
+                        <a href="{% url 'login' %}" class="font-semibold text-indigo-400 hover:text-indigo-300 transition-colors duration-200 ml-1 underline underline-offset-2 decoration-indigo-400/30 hover:decoration-indigo-300/50">
+                            Sign in here
+                        </a>
+                    </p>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Imagem Section-->
+    <div class="relative hidden w-0 flex-1 lg:block overflow-hidden">
+        <img 
+            class="absolute inset-0 h-full w-full object-cover" 
+            src="{% static 'accounts/img/register.png' %}" 
+            alt="Register Image"
+        >       
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const languageCheckboxes = document.querySelectorAll('.language-checkbox');
+    const selectedDisplay = document.getElementById('selected-languages-display');
+    const noLanguagesText = document.getElementById('no-languages-text');
+
+    const languageNames = {
+        'en': 'English', 'fi': 'Finnish', 'sv': 'Swedish', 'es': 'Spanish', 'pt': 'Portuguese',
+        'zh': 'Chinese', 'hi': 'Hindi', 'ar': 'Arabic', 'fr': 'French', 'ru': 'Russian',
+        'de': 'German', 'it': 'Italian', 'ja': 'Japanese', 'ko': 'Korean', 'nl': 'Dutch',
+        'tr': 'Turkish', 'pl': 'Polish', 'cs': 'Czech', 'uk': 'Ukrainian', 'fa': 'Farsi', 'so': 'Somali'
+    };
+
+    function createLanguageBadge(langCode, langName) {
+        const badge = document.createElement('span');
+        badge.className = 'selected-language-badge inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-600 text-white transition-transform';
+        badge.dataset.lang = langCode;
+        badge.innerHTML = `
+            ${langName}
+            <button type="button" class="ml-2 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-indigo-500 focus:outline-none" onclick="removeLanguage(event, '${langCode}')">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+            </button>
+        `;
+        return badge;
+    }
+
+    function updateSelectedLanguages() {
+        const checkedBoxes = Array.from(languageCheckboxes).filter(cb => cb.checked);
+        
+        selectedDisplay.querySelectorAll('span[data-lang]').forEach(badge => badge.remove());
+
+        if (checkedBoxes.length === 0) {
+            noLanguagesText.style.display = 'block';
+        } else {
+            noLanguagesText.style.display = 'none';
+            checkedBoxes.forEach(checkbox => {
+                const langCode = checkbox.value;
+                const langName = languageNames[langCode] || langCode;
+                const badge = createLanguageBadge(langCode, langName);
+                selectedDisplay.appendChild(badge);
+            });
+        }
+    }
+
+    window.removeLanguage = function(event, langCode) {
+        event.preventDefault();
+        const checkbox = document.querySelector(`input.language-checkbox[value="${langCode}"]`);
+        if (checkbox) {
+            checkbox.checked = false;
+            updateCheckboxVisual(checkbox);
+            updateSelectedLanguages();
+        }
+    };
+
+    function updateCheckboxVisual(checkbox) {
+        const checkmark = checkbox.parentNode.querySelector('.checkmark');
+        const customCheckbox = checkbox.parentNode.querySelector('.checkbox-custom');
+        
+        if (checkbox.checked) {
+            checkmark.classList.remove('hidden');
+            customCheckbox.classList.add('border-indigo-400', 'bg-indigo-600');
+            customCheckbox.classList.remove('border-slate-500');
+        } else {
+            checkmark.classList.add('hidden');
+            customCheckbox.classList.remove('border-indigo-400', 'bg-indigo-600');
+            customCheckbox.classList.add('border-slate-500');
+        }
+    }
+
+    languageCheckboxes.forEach(checkbox => {
+        updateCheckboxVisual(checkbox);
+        
+        checkbox.addEventListener('change', function() {
+            updateCheckboxVisual(this);
+            updateSelectedLanguages();
+        });
+    });
+
+    updateSelectedLanguages();
+});
+</script>
+
+{% endblock body %}
