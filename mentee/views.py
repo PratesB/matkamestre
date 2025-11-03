@@ -1,0 +1,220 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
+from accounts.models import MenteeProfile, CustomUser, MentorProfile
+from mentor.models import Task, MentorAvailability, MeetingRecording
+from django.utils import timezone
+
+
+
+
+@login_required(redirect_field_name='login')
+@require_http_methods(['GET'])
+def dashboard_mentee(request):
+    if request.user.is_mentor:
+        messages.error(request, 'Access denied. Only jobseekers can have access this page.')
+        return redirect('login') 
+
+    # Get mentee
+    mentee_profile = get_object_or_404(MenteeProfile.objects.select_related('user'), user=request.user)
+    if not mentee_profile:
+        messages.error(request, 'Jobseeker not found.')
+        return redirect('login')
+
+
+    # Tasks
+    tasks = Task.objects.filter(mentee = mentee_profile).order_by('due_date')
+    completed_tasks_count = tasks.filter(is_done=True).count()
+    pending_tasks_count = tasks.filter(is_done=False).count()
+
+
+
+    # Availability Times
+    available_slots = []
+    if request.user.mentor:
+        try:
+            mentor_profile = request.user.mentor.mentor_profile
+            available_slots = MentorAvailability.objects.filter(
+                mentor=mentor_profile,
+                is_booked=False,
+                start_time__gte=timezone.now()
+            ).order_by('start_time')
+        except CustomUser.mentor_profile.RelatedObjectDoesNotExist:
+            messages.warning(request, 'Coach profile not found. Contact your coach.')
+
+
+    # Reserved Slots
+    reserved_slots = []
+    if mentor_profile:
+        reserved_slots = MentorAvailability.objects.filter(
+            mentee=mentee_profile,
+            mentor=mentor_profile,
+            is_booked=True,
+            start_time__gte=timezone.now()
+        ).order_by('start_time')
+
+
+
+    # Meeting recordings
+    recordings = MeetingRecording.objects.filter(mentee=mentee_profile).order_by('-uploaded_at')
+
+    # Format languages for display with full names
+    language_codes = mentee_profile.language.split(',') if mentee_profile.language else []
+    language_map = dict(MenteeProfile.LANGUAGE_CHOICES)
+    full_language_names = [language_map.get(code, code.upper()) for code in language_codes if code]
+    formatted_languages = ', '.join(full_language_names) if full_language_names else "Not specified"
+
+    
+
+
+    context = {
+        'tasks': tasks,
+        'completed_tasks_count': completed_tasks_count,
+        'pending_tasks_count': pending_tasks_count,
+        'available_slots': available_slots,
+        'recordings': recordings,
+        'is_mentor': False,
+        'reserved_slots': reserved_slots,
+        'mentor_profile': mentor_profile,
+        'mentee_profile': mentee_profile,
+        'formatted_languages': formatted_languages,
+    }
+    
+    
+
+    return render(request, 'dashboard_mentee.html', context)
+
+
+
+
+
+@login_required
+@require_http_methods(['POST'])
+def complete_task(request, task_id):
+    if request.user.is_mentor:
+        messages.error(request, 'Access denied. Only jobseeker can have access this page.')
+        return redirect('login')
+    
+    try:
+        mentee_profile = request.user.mentee_profile
+
+    except CustomUser.mentee_profile.RelatedObjectDoesNotExist:
+        messages.error(request, 'Jobseeker profile not found. Please complete your profile.')
+        return redirect('login')
+
+    task = get_object_or_404(Task, id=task_id, mentee=mentee_profile, is_done=False)
+    task.is_done = True
+    task.save()
+
+    messages.success(request, 'Task marked as completed successfully!')
+    return redirect('dashboard_mentee')
+
+
+
+@login_required
+@require_http_methods(['POST'])
+def book_slot(request, slot_id):
+    if request.user.is_mentor:
+        messages.error(request, 'Access denied. Only jobseeker can have access this page.')
+        return redirect('login')
+    
+    try:
+        mentee_profile = request.user.mentee_profile
+
+    except CustomUser.mentee_profile.RelatedObjectDoesNotExist:
+        messages.error(request, 'Jobseeker profile not found. Please complete your profile.')
+        return redirect('login')
+    
+
+    try:
+        mentor_profile = request.user.mentor.mentor_profile
+
+    except CustomUser.mentor_profile.RelatedObjectDoesNotExist:
+        messages.error(request, 'Coach profile not found. Contact your coach.')
+        return redirect('dashboard_mentee')
+    
+
+    slot = get_object_or_404(
+        MentorAvailability, 
+        id=slot_id, 
+        mentor = mentor_profile, 
+        is_booked = False, 
+        start_time__gte=timezone.now()
+    )
+
+    
+    slot.is_booked = True
+    slot.mentee = mentee_profile
+    slot.save()
+
+    messages.success(request, 'Time slot booked successfully!')
+    return redirect('dashboard_mentee')
+
+
+
+
+
+@login_required(redirect_field_name='login')
+@require_http_methods(['GET'])
+def mentee_profile(request, mentee_id):
+
+    # Get mentee
+    mentee_profile = get_object_or_404(MenteeProfile, id=mentee_id)
+    if not mentee_profile:
+        messages.error(request, 'Jobseeker not found.')
+        return redirect('login')
+    
+
+    if mentee_profile.user.mentor != request.user:
+        messages.error(request, 'Access denied. You can only view profiles of your assigned jobseeker.')
+        return redirect('dashboard_mentor')
+
+    
+
+    # Tasks
+    tasks = Task.objects.filter(mentee = mentee_profile).order_by('is_done', 'due_date', '-created_at')
+
+
+    # Meeting recordings
+    recordings = MeetingRecording.objects.filter(mentee=mentee_profile).order_by('-uploaded_at')
+
+
+    # Get Mentor
+    try:
+        mentor = request.user.mentor_profile
+    except MentorProfile.DoesNotExist:
+        messages.error(request, "Your coach profile could not be found. Please contact support.")
+        return redirect('dashboard_mentor')
+
+
+    # Reserved Slots
+    reserved_slots = MentorAvailability.objects.filter(
+        mentee=mentee_profile,
+        mentor=mentor,
+        is_booked=True,
+        start_time__gte=timezone.now()
+        ).order_by('start_time')
+
+    
+    # Format languages for display with full names
+    language_codes = mentee_profile.language.split(',') if mentee_profile.language else []
+    language_map = dict(MenteeProfile.LANGUAGE_CHOICES)
+    full_language_names = [language_map.get(code, code.upper()) for code in language_codes if code]
+    formatted_languages = ', '.join(full_language_names) if full_language_names else "Not specified"
+
+    
+
+    context = {
+        'tasks': tasks,
+        'recordings': recordings,
+        'is_mentor': False,
+        'reserved_slots': reserved_slots,
+        'mentee_profile': mentee_profile,
+        'mentor': mentor,
+        'formatted_languages': formatted_languages,
+
+    }
+    
+
+    return render(request, 'mentee_profile.html', context)

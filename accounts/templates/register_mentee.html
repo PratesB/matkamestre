@@ -1,0 +1,593 @@
+{% extends "base.html" %}
+
+
+{% block navbar %}{% endblock navbar %}
+
+<style>
+/* Custom scrollbar for language container */
+.max-h-64::-webkit-scrollbar {
+    width: 6px;
+}
+
+.max-h-64::-webkit-scrollbar-track {
+    background: #374151;
+    border-radius: 3px;
+}
+
+.max-h-64::-webkit-scrollbar-thumb {
+    background: #6B7280;
+    border-radius: 3px;
+}
+
+.max-h-64::-webkit-scrollbar-thumb:hover {
+    background: #9CA3AF;
+}
+
+/* Smooth transitions for language options */
+.language-option {
+    transition: all 0.2s ease-in-out;
+}
+
+.language-option:hover {
+    transform: translateX(2px);
+}
+
+/* Custom checkbox animations */
+.checkbox-custom {
+    transition: all 0.2s ease-in-out;
+}
+
+.checkmark {
+    transition: all 0.15s ease-in-out;
+}
+
+/* Badge hover effects */
+.selected-language-badge:hover {
+    transform: scale(1.05);
+}
+
+/* Loading animation for form submission */
+.form-loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.form-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #6366f1;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+</style>
+
+
+
+{% block body %}
+
+<div class="min-h-screen flex items-center justify-center bg-slate-950 px-4 pt-10">
+    <div class="max-w-md w-full bg-gray-800 p-8 md:p-10 rounded-lg shadow-2xl border border-gray-700">
+        <h2 class="text-3xl font-extrabold text-white text-center mb-8">
+            Complete Your Jobseeker Registration
+        </h2>
+
+
+        <div class="mb-6 space-y-3">
+            {% if messages %}
+                {% for message in messages %}
+                <div class="flex items-center p-4 mb-4 text-sm text-{{message.tags}}-800 rounded-lg bg-{{message.tags}}-50 dark:bg-slate-900 dark:text-{{message.tags}}-400" role="alert">
+                    <svg class="shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                    </svg>
+                    <span class="sr-only">Info</span>
+                    <div>
+                        <span class="font-medium">{{message}}</span>
+                    </div>
+                </div>
+                {% endfor %}  
+            {% endif %}            
+        </div>
+
+
+
+        {% if token %}
+            <form method="post" action="{% url 'register_mentee' %}" enctype="multipart/form-data" class="space-y-6"> {% csrf_token %}                
+
+                <input type="hidden" name="token" value="{{ token }}">
+
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-300 mb-2">
+                        Email:
+                    </label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        value="{{ mentee_email }}" 
+                        readonly 
+                        required
+                        class="appearance-none block w-full px-4 py-3 border border-gray-700 rounded-md shadow-sm placeholder-gray-500 text-white bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm cursor-not-allowed"
+                    >
+                </div>
+
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-300 mb-2">
+                        Username:
+                    </label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        placeholder="" 
+                        value="{{ username|default:'' }}" 
+                        required
+                        class="appearance-none block w-full px-4 py-3 border border-gray-700 rounded-md shadow-sm placeholder-gray-500 text-white bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    >
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-300 mb-2">
+                        Password:
+                    </label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="••••••••" 
+                        required
+                        class="appearance-none block w-full px-4 py-3 border border-gray-700 rounded-md shadow-sm placeholder-gray-500 text-white bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    >
+                </div>
+
+                <div>
+                    <label for="confirm_password" class="block text-sm font-medium text-gray-300 mb-2">
+                        Confirm Password:
+                    </label>
+                    <input 
+                        type="password" 
+                        id="confirm_password" 
+                        name="confirm_password" 
+                        placeholder="••••••••" 
+                        required
+                        class="appearance-none block w-full px-4 py-3 border border-gray-700 rounded-md shadow-sm placeholder-gray-500 text-white bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    >
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-3">
+                        Languages You Speak:
+                    </label>
+                    
+                    <!-- Language Selection Container -->
+                    <div class="bg-gray-700 border border-gray-600 rounded-md p-4 max-h-64 overflow-y-auto">
+                        <!-- Selected Languages Display -->
+                        <div id="selected-languages-display" class="mb-3 p-2 bg-gray-800 rounded-md border border-gray-600 min-h-[2.5rem] flex flex-wrap gap-2 items-center">
+                            <span id="no-languages-text" class="text-gray-400 text-sm">No languages selected</span>
+                        </div>
+                        
+                        <!-- Language Checkboxes Grid -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <label class="language-option flex items-center p-2 hover:bg-gray-600 rounded-md cursor-pointer transition-colors">
+                                <input type="checkbox" name="languages" value="en" class="language-checkbox sr-only" {% if 'en' in selected_languages %}checked{% endif %}>
+                                <div class="checkbox-custom w-4 h-4 border-2 border-gray-500 rounded mr-3 flex items-center justify-center">
+                                    <svg class="checkmark w-3 h-3 text-indigo-400 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-white text-sm">English</span>
+                            </label>
+                            
+                            <label class="language-option flex items-center p-2 hover:bg-gray-600 rounded-md cursor-pointer transition-colors">
+                                <input type="checkbox" name="languages" value="fi" class="language-checkbox sr-only" {% if 'fi' in selected_languages %}checked{% endif %}>
+                                <div class="checkbox-custom w-4 h-4 border-2 border-gray-500 rounded mr-3 flex items-center justify-center">
+                                    <svg class="checkmark w-3 h-3 text-indigo-400 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-white text-sm">Finnish</span>
+                            </label>
+                            
+                            <label class="language-option flex items-center p-2 hover:bg-gray-600 rounded-md cursor-pointer transition-colors">
+                                <input type="checkbox" name="languages" value="sv" class="language-checkbox sr-only" {% if 'sv' in selected_languages %}checked{% endif %}>
+                                <div class="checkbox-custom w-4 h-4 border-2 border-gray-500 rounded mr-3 flex items-center justify-center">
+                                    <svg class="checkmark w-3 h-3 text-indigo-400 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-white text-sm">Swedish</span>
+                            </label>
+                            
+                            <label class="language-option flex items-center p-2 hover:bg-gray-600 rounded-md cursor-pointer transition-colors">
+                                <input type="checkbox" name="languages" value="es" class="language-checkbox sr-only" {% if 'es' in selected_languages %}checked{% endif %}>
+                                <div class="checkbox-custom w-4 h-4 border-2 border-gray-500 rounded mr-3 flex items-center justify-center">
+                                    <svg class="checkmark w-3 h-3 text-indigo-400 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-white text-sm">Spanish (Español)</span>
+                            </label>
+                            
+                            <label class="language-option flex items-center p-2 hover:bg-gray-600 rounded-md cursor-pointer transition-colors">
+                                <input type="checkbox" name="languages" value="pt" class="language-checkbox sr-only" {% if 'pt' in selected_languages %}checked{% endif %}>
+                                <div class="checkbox-custom w-4 h-4 border-2 border-gray-500 rounded mr-3 flex items-center justify-center">
+                                    <svg class="checkmark w-3 h-3 text-indigo-400 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-white text-sm">Portuguese (Português)</span>
+                            </label>
+                            
+                            <label class="language-option flex items-center p-2 hover:bg-gray-600 rounded-md cursor-pointer transition-colors">
+                                <input type="checkbox" name="languages" value="zh" class="language-checkbox sr-only" {% if 'zh' in selected_languages %}checked{% endif %}>
+                                <div class="checkbox-custom w-4 h-4 border-2 border-gray-500 rounded mr-3 flex items-center justify-center">
+                                    <svg class="checkmark w-3 h-3 text-indigo-400 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-white text-sm">Chinese (Mandarin)</span>
+                            </label>
+                            
+                            <label class="language-option flex items-center p-2 hover:bg-gray-600 rounded-md cursor-pointer transition-colors">
+                                <input type="checkbox" name="languages" value="hi" class="language-checkbox sr-only" {% if 'hi' in selected_languages %}checked{% endif %}>
+                                <div class="checkbox-custom w-4 h-4 border-2 border-gray-500 rounded mr-3 flex items-center justify-center">
+                                    <svg class="checkmark w-3 h-3 text-indigo-400 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-white text-sm">Hindi</span>
+                            </label>
+                            
+                            <label class="language-option flex items-center p-2 hover:bg-gray-600 rounded-md cursor-pointer transition-colors">
+                                <input type="checkbox" name="languages" value="ar" class="language-checkbox sr-only" {% if 'ar' in selected_languages %}checked{% endif %}>
+                                <div class="checkbox-custom w-4 h-4 border-2 border-gray-500 rounded mr-3 flex items-center justify-center">
+                                    <svg class="checkmark w-3 h-3 text-indigo-400 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-white text-sm">Arabic (العربية)</span>
+                            </label>
+                            
+                            <label class="language-option flex items-center p-2 hover:bg-gray-600 rounded-md cursor-pointer transition-colors">
+                                <input type="checkbox" name="languages" value="fr" class="language-checkbox sr-only" {% if 'fr' in selected_languages %}checked{% endif %}>
+                                <div class="checkbox-custom w-4 h-4 border-2 border-gray-500 rounded mr-3 flex items-center justify-center">
+                                    <svg class="checkmark w-3 h-3 text-indigo-400 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-white text-sm">French (Français)</span>
+                            </label>
+                            
+                            <label class="language-option flex items-center p-2 hover:bg-gray-600 rounded-md cursor-pointer transition-colors">
+                                <input type="checkbox" name="languages" value="ru" class="language-checkbox sr-only" {% if 'ru' in selected_languages %}checked{% endif %}>
+                                <div class="checkbox-custom w-4 h-4 border-2 border-gray-500 rounded mr-3 flex items-center justify-center">
+                                    <svg class="checkmark w-3 h-3 text-indigo-400 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-white text-sm">Russian (Русский)</span>
+                            </label>
+                            
+                            <label class="language-option flex items-center p-2 hover:bg-gray-600 rounded-md cursor-pointer transition-colors">
+                                <input type="checkbox" name="languages" value="de" class="language-checkbox sr-only" {% if 'de' in selected_languages %}checked{% endif %}>
+                                <div class="checkbox-custom w-4 h-4 border-2 border-gray-500 rounded mr-3 flex items-center justify-center">
+                                    <svg class="checkmark w-3 h-3 text-indigo-400 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-white text-sm">German (Deutsch)</span>
+                            </label>
+                            
+                            <label class="language-option flex items-center p-2 hover:bg-gray-600 rounded-md cursor-pointer transition-colors">
+                                <input type="checkbox" name="languages" value="it" class="language-checkbox sr-only" {% if 'it' in selected_languages %}checked{% endif %}>
+                                <div class="checkbox-custom w-4 h-4 border-2 border-gray-500 rounded mr-3 flex items-center justify-center">
+                                    <svg class="checkmark w-3 h-3 text-indigo-400 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-white text-sm">Italian (Italiano)</span>
+                            </label>
+                            
+                            <label class="language-option flex items-center p-2 hover:bg-gray-600 rounded-md cursor-pointer transition-colors">
+                                <input type="checkbox" name="languages" value="ja" class="language-checkbox sr-only" {% if 'ja' in selected_languages %}checked{% endif %}>
+                                <div class="checkbox-custom w-4 h-4 border-2 border-gray-500 rounded mr-3 flex items-center justify-center">
+                                    <svg class="checkmark w-3 h-3 text-indigo-400 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-white text-sm">Japanese (日本語)</span>
+                            </label>
+                            
+                            <label class="language-option flex items-center p-2 hover:bg-gray-600 rounded-md cursor-pointer transition-colors">
+                                <input type="checkbox" name="languages" value="ko" class="language-checkbox sr-only" {% if 'ko' in selected_languages %}checked{% endif %}>
+                                <div class="checkbox-custom w-4 h-4 border-2 border-gray-500 rounded mr-3 flex items-center justify-center">
+                                    <svg class="checkmark w-3 h-3 text-indigo-400 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-white text-sm">Korean (한국어)</span>
+                            </label>
+                            
+                            <label class="language-option flex items-center p-2 hover:bg-gray-600 rounded-md cursor-pointer transition-colors">
+                                <input type="checkbox" name="languages" value="nl" class="language-checkbox sr-only" {% if 'nl' in selected_languages %}checked{% endif %}>
+                                <div class="checkbox-custom w-4 h-4 border-2 border-gray-500 rounded mr-3 flex items-center justify-center">
+                                    <svg class="checkmark w-3 h-3 text-indigo-400 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-white text-sm">Dutch (Nederlands)</span>
+                            </label>
+                            
+                            <label class="language-option flex items-center p-2 hover:bg-gray-600 rounded-md cursor-pointer transition-colors">
+                                <input type="checkbox" name="languages" value="tr" class="language-checkbox sr-only" {% if 'tr' in selected_languages %}checked{% endif %}>
+                                <div class="checkbox-custom w-4 h-4 border-2 border-gray-500 rounded mr-3 flex items-center justify-center">
+                                    <svg class="checkmark w-3 h-3 text-indigo-400 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-white text-sm">Turkish (Türkçe)</span>
+                            </label>
+                            
+                            <label class="language-option flex items-center p-2 hover:bg-gray-600 rounded-md cursor-pointer transition-colors">
+                                <input type="checkbox" name="languages" value="pl" class="language-checkbox sr-only" {% if 'pl' in selected_languages %}checked{% endif %}>
+                                <div class="checkbox-custom w-4 h-4 border-2 border-gray-500 rounded mr-3 flex items-center justify-center">
+                                    <svg class="checkmark w-3 h-3 text-indigo-400 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-white text-sm">Polish (Polski)</span>
+                            </label>
+                            
+                            <label class="language-option flex items-center p-2 hover:bg-gray-600 rounded-md cursor-pointer transition-colors">
+                                <input type="checkbox" name="languages" value="cs" class="language-checkbox sr-only" {% if 'cs' in selected_languages %}checked{% endif %}>
+                                <div class="checkbox-custom w-4 h-4 border-2 border-gray-500 rounded mr-3 flex items-center justify-center">
+                                    <svg class="checkmark w-3 h-3 text-indigo-400 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-white text-sm">Czech (Čeština)</span>
+                            </label>
+                            
+                            <label class="language-option flex items-center p-2 hover:bg-gray-600 rounded-md cursor-pointer transition-colors">
+                                <input type="checkbox" name="languages" value="uk" class="language-checkbox sr-only" {% if 'uk' in selected_languages %}checked{% endif %}>
+                                <div class="checkbox-custom w-4 h-4 border-2 border-gray-500 rounded mr-3 flex items-center justify-center">
+                                    <svg class="checkmark w-3 h-3 text-indigo-400 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-white text-sm">Ukrainian (Українська)</span>
+                            </label>
+                            
+                            <label class="language-option flex items-center p-2 hover:bg-gray-600 rounded-md cursor-pointer transition-colors">
+                                <input type="checkbox" name="languages" value="fa" class="language-checkbox sr-only" {% if 'fa' in selected_languages %}checked{% endif %}>
+                                <div class="checkbox-custom w-4 h-4 border-2 border-gray-500 rounded mr-3 flex items-center justify-center">
+                                    <svg class="checkmark w-3 h-3 text-indigo-400 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-white text-sm">Farsi (Persian/Dari)</span>
+                            </label>
+                            
+                            <label class="language-option flex items-center p-2 hover:bg-gray-600 rounded-md cursor-pointer transition-colors">
+                                <input type="checkbox" name="languages" value="so" class="language-checkbox sr-only" {% if 'so' in selected_languages %}checked{% endif %}>
+                                <div class="checkbox-custom w-4 h-4 border-2 border-gray-500 rounded mr-3 flex items-center justify-center">
+                                    <svg class="checkmark w-3 h-3 text-indigo-400 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-white text-sm">Somali</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <p class="mt-2 text-xs text-gray-400">
+                        Click to select multiple languages. Your selections will appear above.
+                    </p>
+                </div>
+
+                <div>
+                    <label for="location" class="block text-sm font-medium text-gray-300 mb-2">
+                        Location:
+                    </label>
+                    <input 
+                        type="text" 
+                        id="location" 
+                        name="location" 
+                        placeholder="" 
+                        value="{{ location|default:'' }}" 
+                        class="appearance-none block w-full px-4 py-3 border border-gray-700 rounded-md shadow-sm placeholder-gray-500 text-white bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    >
+                </div>
+
+                <div>
+                    <label for="professional_career" class="block text-sm font-medium text-gray-300 mb-2">
+                        Professional Background:
+                    </label>
+                    <textarea 
+                        id="professional_career" 
+                        name="professional_career" 
+                        rows="4"
+                        placeholder="Tell us about your professional background and career goals..."
+                        class="appearance-none block w-full px-4 py-3 border border-gray-700 rounded-md shadow-sm placeholder-gray-500 text-white bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    >{{ professional_career|default:'' }}</textarea>
+                </div>
+
+                <div>
+                    <label for="professional_goal" class="block text-sm font-medium text-gray-300 mb-2">
+                        Professional Goal:
+                    </label>
+                    <textarea 
+                        id="professional_goal" 
+                        name="professional_goal" 
+                        rows="4"
+                        placeholder="Describe your professional goals in Finland..."
+                        class="appearance-none block w-full px-4 py-3 border border-gray-700 rounded-md shadow-sm placeholder-gray-500 text-white bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    >{{ professional_goal|default:'' }}</textarea>
+                </div>
+
+                <div>
+                    <label for="cv_file" class="block text-sm font-medium text-gray-300 mb-2">
+                        Upload CV/Resume (PDF):
+                        <span class="text-red-400 ml-1">*</span>
+                    </label>
+                    <input 
+                        type="file" 
+                        id="cv_file" 
+                        name="cv_file" 
+                        accept=".pdf"
+                        required
+                        class="appearance-none block w-full text-sm text-gray-400 border border-gray-700 rounded-md cursor-pointer file:mr-4 file:py-3 file:px-4 file:rounded-l-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700"
+                    >
+                    <p class="mt-1 text-xs text-gray-400">This document is required for registration.</p>
+                </div>
+
+                <div>
+                    <button 
+                        type="submit" 
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-bold text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out cursor-pointer"
+                    >
+                        Create Account
+                    </button>
+                </div>
+            </form>
+        {% else %}
+            <p class="text-white text-center text-lg mt-8">
+                Please use a valid invitation link to register.
+            </p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const languageCheckboxes = document.querySelectorAll('.language-checkbox');
+    const selectedDisplay = document.getElementById('selected-languages-display');
+    const noLanguagesText = document.getElementById('no-languages-text');
+
+    // Language mapping for display names
+    const languageNames = {
+        'en': 'English',
+        'fi': 'Finnish', 
+        'sv': 'Swedish',
+        'es': 'Spanish',
+        'pt': 'Portuguese',
+        'zh': 'Chinese',
+        'hi': 'Hindi',
+        'ar': 'Arabic',
+        'fr': 'French',
+        'ru': 'Russian',
+        'de': 'German',
+        'it': 'Italian',
+        'ja': 'Japanese',
+        'ko': 'Korean',
+        'nl': 'Dutch',
+        'tr': 'Turkish',
+        'pl': 'Polish',
+        'cs': 'Czech',
+        'uk': 'Ukrainian',
+        'fa': 'Farsi',
+        'so': 'Somali'
+    };
+
+    // Function to create a language badge
+    function createLanguageBadge(langCode, langName) {
+        const badge = document.createElement('span');
+        badge.className = 'inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-600 text-white mr-2 mb-1';
+        badge.innerHTML = `
+            ${langName}
+            <button type="button" class="ml-2 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-indigo-500 focus:outline-none" onclick="removeLanguage('${langCode}')">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+            </button>
+        `;
+        return badge;
+    }
+
+    // Function to update the selected languages display
+    function updateSelectedLanguages() {
+        const checkedBoxes = Array.from(languageCheckboxes).filter(cb => cb.checked);
+        selectedDisplay.innerHTML = '';
+
+        if (checkedBoxes.length === 0) {
+            noLanguagesText.style.display = 'block';
+            selectedDisplay.appendChild(noLanguagesText);
+        } else {
+            noLanguagesText.style.display = 'none';
+            checkedBoxes.forEach(checkbox => {
+                const langCode = checkbox.value;
+                const langName = languageNames[langCode] || langCode;
+                const badge = createLanguageBadge(langCode, langName);
+                selectedDisplay.appendChild(badge);
+            });
+        }
+    }
+
+    // Function to remove a language (called from badge button)
+    window.removeLanguage = function(langCode) {
+        const checkbox = document.querySelector(`input[value="${langCode}"]`);
+        if (checkbox) {
+            checkbox.checked = false;
+            updateCheckboxVisual(checkbox);
+            updateSelectedLanguages();
+        }
+    };
+
+    // Function to update checkbox visual state
+    function updateCheckboxVisual(checkbox) {
+        const checkmark = checkbox.parentNode.querySelector('.checkmark');
+        const customCheckbox = checkbox.parentNode.querySelector('.checkbox-custom');
+        
+        if (checkbox.checked) {
+            checkmark.classList.remove('hidden');
+            customCheckbox.classList.add('border-indigo-400', 'bg-indigo-600');
+            customCheckbox.classList.remove('border-gray-500');
+        } else {
+            checkmark.classList.add('hidden');
+            customCheckbox.classList.remove('border-indigo-400', 'bg-indigo-600');
+            customCheckbox.classList.add('border-gray-500');
+        }
+    }
+
+    // Add event listeners to all language checkboxes
+    languageCheckboxes.forEach(checkbox => {
+        // Initialize visual state
+        updateCheckboxVisual(checkbox);
+        
+        // Add change listener
+        checkbox.addEventListener('change', function() {
+            updateCheckboxVisual(this);
+            updateSelectedLanguages();
+        });
+    });
+
+    // Initialize the display
+    updateSelectedLanguages();
+
+    // Form validation
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const checkedBoxes = Array.from(languageCheckboxes).filter(cb => cb.checked);
+            if (checkedBoxes.length === 0) {
+                e.preventDefault();
+                alert('Please select at least one language.');
+                return false;
+            }
+        });
+    }
+});
+</script>
+
+{% endblock body %}
