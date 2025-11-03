@@ -13,7 +13,7 @@ from django.db import transaction, models
 @login_required(redirect_field_name='login')
 def dashboard_mentor(request):
     if not request.user.is_mentor:
-        messages.error(request, 'Access denied. Only coach can view this dashboard.')
+        messages.error(request, 'Access denied. Only Mentor can view this dashboard.')
         return redirect('login')
 
     my_mentees = MenteeProfile.objects.filter(user__mentor=request.user).select_related('user')
@@ -80,7 +80,7 @@ def dashboard_mentor(request):
 @require_http_methods(['GET','POST'])
 def set_availability(request):
     if not request.user.is_mentor:
-        messages.error(request, 'Access denied. Only coaches can set availability.')
+        messages.error(request, 'Access denied. Only Mentores can set availability.')
         return redirect('login')
     
     
@@ -145,7 +145,7 @@ def set_availability(request):
 @require_http_methods(['GET'])
 def availability_list(request):
     if not request.user.is_mentor:
-        messages.error(request, 'Access denied. Only coaches can list availability.')
+        messages.error(request, 'Access denied. Only Mentores can list availability.')
         return redirect('login')
     
     mentor_profile = get_object_or_404(MentorProfile, user=request.user)
@@ -168,7 +168,7 @@ def availability_list(request):
 @require_http_methods(['GET', 'POST'])
 def delete_availability(request, pk):
     if not request.user.is_mentor:
-        messages.error(request, 'Access denied. Only coaches can delete availability.')
+        messages.error(request, 'Access denied. Only Mentores can delete availability.')
         return redirect('login')
     
 
@@ -203,7 +203,7 @@ def delete_availability(request, pk):
 @require_http_methods(['GET','POST'])
 def edit_availability(request, pk):
     if not request.user.is_mentor:
-        messages.error(request, 'Access denied. Only coaches can edit availability.')
+        messages.error(request, 'Access denied. Only Mentores can edit availability.')
         return redirect('login')
     
 
@@ -286,7 +286,7 @@ def edit_availability(request, pk):
 @require_http_methods(['GET', 'POST'])
 def create_task(request):
     if not request.user.is_mentor:
-        messages.error(request, 'Access denied. Only coaches can create tasks.')
+        messages.error(request, 'Access denied. Only Mentores can create tasks.')
         return redirect('login')
     
     mentor_profile = get_object_or_404(MentorProfile, user=request.user)
@@ -312,7 +312,7 @@ def create_task(request):
             
 
             if not mentor_profile: 
-                messages.error(request, 'Selected jobseeker is not associated with your profile.')
+                messages.error(request, 'Selected Mentee is not associated with your profile.')
                 return render(request, 'create_task.html', context)
 
 
@@ -350,7 +350,7 @@ def create_task(request):
 @require_http_methods(['GET'])
 def list_task(request):
     if not request.user.is_mentor:
-        messages.error(request, 'Access denied. Only coaches can create tasks.')
+        messages.error(request, 'Access denied. Only Mentores can create tasks.')
         return redirect('login')
     
     
@@ -367,7 +367,7 @@ def list_task(request):
 @require_http_methods(['POST'])
 def delete_task(request, pk):
     if not request.user.is_mentor:
-        messages.error(request, 'Access denied. Only coaches can create tasks.')
+        messages.error(request, 'Access denied. Only Mentores can create tasks.')
         return redirect('login')
     
     
@@ -390,7 +390,7 @@ def delete_task(request, pk):
 @require_http_methods(['POST'])
 def toggle_task_status(request, pk):
     if not request.user.is_mentor:
-        messages.error(request, 'Access denied. Only coaches can update task status.')
+        messages.error(request, 'Access denied. Only Mentores can update task status.')
         return redirect('login')
     
     mentor_profile = get_object_or_404(MentorProfile, user=request.user)
@@ -414,7 +414,7 @@ def toggle_task_status(request, pk):
 @require_http_methods(['GET', 'POST'])
 def edit_task(request, pk):
     if not request.user.is_mentor:
-        messages.error(request, 'Access denied. Only coaches can create tasks.')
+        messages.error(request, 'Access denied. Only Mentores can create tasks.')
         return redirect('login')
     
     mentor_profile = get_object_or_404(MentorProfile, user=request.user)
@@ -469,7 +469,7 @@ def edit_task(request, pk):
 @require_http_methods(['GET', 'POST'])
 def upload_meeting_recording(request):
     if not request.user.is_mentor:
-        messages.error(request, 'Access denied. Only coaches can create tasks.')
+        messages.error(request, 'Access denied. Only Mentores can create tasks.')
         return redirect('login')
     
 
@@ -491,7 +491,7 @@ def upload_meeting_recording(request):
         video = request.FILES.get('video')
         
         if not all([mentee_email, title, video]):
-            messages.error(request, 'Coache, title and description are required.')
+            messages.error(request, 'Mentore, title and description are required.')
             return render(request, 'upload_meeting_recording.html', context)
         
         try:
@@ -499,7 +499,7 @@ def upload_meeting_recording(request):
             
 
             if not mentor_profile: 
-                messages.error(request, 'Selected jobseeker is not associated with your profile.')
+                messages.error(request, 'Selected Mentee is not associated with your profile.')
                 return render(request, 'upload_meeting_recording.html', context)
 
 
@@ -547,7 +547,7 @@ def list_meeting_recordings(request):
         }
 
     else:
-        messages.error(request, 'Access denied. You must be a coach or jobseeker to view recordings.')
+        messages.error(request, 'Access denied. You must be a Mentor or Mentee to view recordings.')
         return redirect('login') 
 
     

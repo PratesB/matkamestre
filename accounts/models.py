@@ -104,7 +104,7 @@ class MenteeProfile(models.Model):
     language = models.TextField(
         blank=True,
         null=True,
-        help_text="Primary language for coaching/job search."
+        help_text="Primary language for Mentoring/job search."
     )
 
     # --- New Field 3: Location ---
