@@ -13,13 +13,13 @@ from django.utils import timezone
 @require_http_methods(['GET'])
 def dashboard_mentee(request):
     if request.user.is_mentor:
-        messages.error(request, 'Access denied. Only jobseekers can have access this page.')
+        messages.error(request, 'Access denied. Only Mentees can have access this page.')
         return redirect('login') 
 
     # Get mentee
     mentee_profile = get_object_or_404(MenteeProfile.objects.select_related('user'), user=request.user)
     if not mentee_profile:
-        messages.error(request, 'Jobseeker not found.')
+        messages.error(request, 'Mentee not found.')
         return redirect('login')
 
 
@@ -41,7 +41,7 @@ def dashboard_mentee(request):
                 start_time__gte=timezone.now()
             ).order_by('start_time')
         except CustomUser.mentor_profile.RelatedObjectDoesNotExist:
-            messages.warning(request, 'Coach profile not found. Contact your coach.')
+            messages.warning(request, 'Mentor profile not found. Contact your Mentor.')
 
 
     # Reserved Slots
@@ -93,14 +93,14 @@ def dashboard_mentee(request):
 @require_http_methods(['POST'])
 def complete_task(request, task_id):
     if request.user.is_mentor:
-        messages.error(request, 'Access denied. Only jobseeker can have access this page.')
+        messages.error(request, 'Access denied. Only Mentee can have access this page.')
         return redirect('login')
     
     try:
         mentee_profile = request.user.mentee_profile
 
     except CustomUser.mentee_profile.RelatedObjectDoesNotExist:
-        messages.error(request, 'Jobseeker profile not found. Please complete your profile.')
+        messages.error(request, 'Mentee profile not found. Please complete your profile.')
         return redirect('login')
 
     task = get_object_or_404(Task, id=task_id, mentee=mentee_profile, is_done=False)
@@ -116,14 +116,14 @@ def complete_task(request, task_id):
 @require_http_methods(['POST'])
 def book_slot(request, slot_id):
     if request.user.is_mentor:
-        messages.error(request, 'Access denied. Only jobseeker can have access this page.')
+        messages.error(request, 'Access denied. Only Mentee can have access this page.')
         return redirect('login')
     
     try:
         mentee_profile = request.user.mentee_profile
 
     except CustomUser.mentee_profile.RelatedObjectDoesNotExist:
-        messages.error(request, 'Jobseeker profile not found. Please complete your profile.')
+        messages.error(request, 'Mentee profile not found. Please complete your profile.')
         return redirect('login')
     
 
@@ -131,7 +131,7 @@ def book_slot(request, slot_id):
         mentor_profile = request.user.mentor.mentor_profile
 
     except CustomUser.mentor_profile.RelatedObjectDoesNotExist:
-        messages.error(request, 'Coach profile not found. Contact your coach.')
+        messages.error(request, 'Mentor profile not found. Contact your Mentor.')
         return redirect('dashboard_mentee')
     
 
@@ -162,12 +162,12 @@ def mentee_profile(request, mentee_id):
     # Get mentee
     mentee_profile = get_object_or_404(MenteeProfile, id=mentee_id)
     if not mentee_profile:
-        messages.error(request, 'Jobseeker not found.')
+        messages.error(request, 'Mentee not found.')
         return redirect('login')
     
 
     if mentee_profile.user.mentor != request.user:
-        messages.error(request, 'Access denied. You can only view profiles of your assigned jobseeker.')
+        messages.error(request, 'Access denied. You can only view profiles of your assigned Mentee.')
         return redirect('dashboard_mentor')
 
     
@@ -184,7 +184,7 @@ def mentee_profile(request, mentee_id):
     try:
         mentor = request.user.mentor_profile
     except MentorProfile.DoesNotExist:
-        messages.error(request, "Your coach profile could not be found. Please contact support.")
+        messages.error(request, "Your Mentor profile could not be found. Please contact support.")
         return redirect('dashboard_mentor')
 
 

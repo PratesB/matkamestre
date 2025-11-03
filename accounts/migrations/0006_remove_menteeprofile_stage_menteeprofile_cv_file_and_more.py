@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='menteeprofile',
             name='language_proficiency',
-            field=models.CharField(choices=[('en', 'English'), ('fi', 'Finnish'), ('sv', 'Swedish'), ('es', 'Spanish (Español)'), ('pt', 'Portuguese (Português)'), ('zh', 'Chinese (Mandarim)'), ('hi', 'Hindi'), ('ar', 'Arabic (العربية)'), ('fr', 'French (Français)'), ('ru', 'Russian (Русский)'), ('de', 'German (Deutsch)'), ('it', 'Italian (Italiano)'), ('ja', 'Japanese (日本語)'), ('ko', 'Korean (한국어)'), ('nl', 'Dutch (Nederlands)'), ('tr', 'Turkish (Türkçe)'), ('pl', 'Polish (Polski)'), ('cs', 'Czech (Čeština)'), ('uk', 'Ukrainian (Українська)'), ('fa', 'Farsi (Persian/Dari)'), ('tr', 'Turkish (Türkçe)'), ('so', 'Somali'), ('ar', 'Arabic')], default='en', help_text='Primary language for coaching/job search.', max_length=5),
+            field=models.CharField(choices=[('en', 'English'), ('fi', 'Finnish'), ('sv', 'Swedish'), ('es', 'Spanish (Español)'), ('pt', 'Portuguese (Português)'), ('zh', 'Chinese (Mandarim)'), ('hi', 'Hindi'), ('ar', 'Arabic (العربية)'), ('fr', 'French (Français)'), ('ru', 'Russian (Русский)'), ('de', 'German (Deutsch)'), ('it', 'Italian (Italiano)'), ('ja', 'Japanese (日本語)'), ('ko', 'Korean (한국어)'), ('nl', 'Dutch (Nederlands)'), ('tr', 'Turkish (Türkçe)'), ('pl', 'Polish (Polski)'), ('cs', 'Czech (Čeština)'), ('uk', 'Ukrainian (Українська)'), ('fa', 'Farsi (Persian/Dari)'), ('tr', 'Turkish (Türkçe)'), ('so', 'Somali'), ('ar', 'Arabic')], default='en', help_text='Primary language for Mentoring/job search.', max_length=5),
         ),
         migrations.AddField(
             model_name='menteeprofile',

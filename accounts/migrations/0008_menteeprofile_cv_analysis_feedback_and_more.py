@@ -18,6 +18,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='menteeprofile',
             name='language',
-            field=models.TextField(blank=True, help_text='Primary language for coaching/job search.', null=True),
+            field=models.TextField(blank=True, help_text='Primary language for Mentoring/job search.', null=True),
         ),
     ]

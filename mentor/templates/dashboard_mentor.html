@@ -5,8 +5,8 @@
   <nav class="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-lg border-b border-slate-700/50 py-4">
     <div class="container mx-auto px-4 flex justify-between items-center">
       <a href="{% url 'home' %}" class="flex items-center space-x-3">
-        <img class="h-10 w-auto rounded-full" src="{% static 'img/logo.png' %}" alt="RefugeesSync Logo" />
-        <span class="text-2xl font-bold text-white tracking-tight">RefugeesSync</span>
+        <img class="h-10 w-auto rounded-full" src="{% static 'img/logo.png' %}" alt="MatkaMestre Logo" />
+        <span class="text-2xl font-bold text-white tracking-tight">MatkaMestre</span>
       </a>
 
       <nav class="hidden lg:flex space-x-8">
@@ -46,7 +46,7 @@
 
             <div>
               <h1 class="text-3xl font-bold text-white">Welcome, {{ user.username }}</h1>
-              <p class="mt-2 text-sm text-slate-400">Manage and track your coach relationships</p>
+              <p class="mt-2 text-sm text-slate-400">Manage and track your Mentor relationships</p>
             </div>
           </div>
 
@@ -55,7 +55,7 @@
             <a href="{% url 'invite_mentee' %}" class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-950">
               <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-              </svg>Add Jobseekers
+              </svg>Add Mentees
             </a>
           </div>
         </div>
@@ -89,7 +89,7 @@
               </div>
             </div>
             <div class="ml-4">
-              <p class="text-sm font-medium text-slate-400">Total Jobseekers</p>
+              <p class="text-sm font-medium text-slate-400">Total Mentees</p>
               <p class="text-2xl font-semibold text-white">{{ total_mentees }}</p>
             </div>
           </div>
@@ -112,7 +112,7 @@
                     <div class="mb-2 p-3 border border-slate-700 rounded-lg mt-4">
                       <p class="text-sm font-semibold text-white">Date: {{ slot.start_time|date:'d/m/Y' }}</p>
                       <p class="text-sm font-semibold text-white">Time: {{ slot.start_time|date:'H:i' }} - {{ slot.end_time|date:'H:i' }}</p>
-                      <p class="text-sm font-semibold text-white">Jobseeker: {{ slot.mentee.user.email }}</p>
+                      <p class="text-sm font-semibold text-white">Mentee: {{ slot.mentee.user.email }}</p>
                     </div>
                   {% endfor %}
                 {% else %}
@@ -167,7 +167,7 @@
       <!-- Table Section -->
       <div class="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-800">
-          <h3 class="text-lg font-semibold text-white">Jobseeker List</h3>
+          <h3 class="text-lg font-semibold text-white">Mentee List</h3>
         </div>
 
         <div class="overflow-x-auto">
@@ -244,8 +244,8 @@
                     <svg class="mx-auto h-12 w-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                     </svg>
-                    <h3 class="mt-2 text-sm font-medium text-slate-300">No Jobseekers yet</h3>
-                    <p class="mt-1 text-sm text-slate-500">Get started by adding your first Jobseeker using the button above.</p>
+                    <h3 class="mt-2 text-sm font-medium text-slate-300">No Mentees yet</h3>
+                    <p class="mt-1 text-sm text-slate-500">Get started by adding your first Mentee using the button above.</p>
                   </td>
                 </tr>
               {% endif %}

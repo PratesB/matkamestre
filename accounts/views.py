@@ -130,7 +130,7 @@ def logout(request):
 @require_http_methods(['GET','POST'])
 def invite_mentee(request):
     if not request.user.is_authenticated or not request.user.is_mentor:
-        messages.error(request, 'Only coach can invite jobseekers.')
+        messages.error(request, 'Only Mentor can invite Mentees.')
         return redirect('login')
         
 
@@ -139,7 +139,7 @@ def invite_mentee(request):
 
 
         if CustomUser.objects.filter(email=mentee_email).exists():
-            messages.error(request, 'This jobseekers mail is already used.')
+            messages.error(request, 'This Mentees mail is already used.')
             return render(request, 'invite_mentee.html')
 
 
@@ -164,8 +164,8 @@ def invite_mentee(request):
 
 
             send_mail(
-                subject='Invite to join RefugeeSync',
-                message=f'Hello!\n\n You have been invited by {request.user.email} to join RefugeeSync as a jobseeker. Use this link to register:{invite_url}\n\nImportant: this invite link is valid for 24 hours.\n\nKind regards,\n\RefugeeSync Team.',
+                subject='Invite to join MatkaMestre',
+                message=f'Hello!\n\n You have been invited by {request.user.email} to join MatkaMestre as a Mentee. Use this link to register:{invite_url}\n\nImportant: this invite link is valid for 24 hours.\n\nKind regards,\n\MatkaMestre Team.',
 
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[mentee_email],
@@ -317,7 +317,7 @@ def register_mentee(request):
 @require_http_methods(['GET','POST'])
 def update_mentorprofile(request):
     if not request.user.is_mentor:
-        messages.error(request, 'Access denied. Only coaches can update their profile.')
+        messages.error(request, 'Access denied. Only Mentores can update their profile.')
         return redirect('login')
     
 
@@ -434,9 +434,9 @@ def update_mentorprofile(request):
                     mentor_profile.profile_picture = profile_picture
 
                 mentor_profile.save()
-                logger.info(f"Updated Coach Profile for {request.user.email}")
+                logger.info(f"Updated Mentor Profile for {request.user.email}")
 
-                messages.success(request, 'Coach profile updated successfully!')
+                messages.success(request, 'Mentor profile updated successfully!')
                 return redirect('dashboard_mentor')
 
 
@@ -478,12 +478,12 @@ def delete_mentee(request, user_id):
                         
 
                 except CustomUser.mentee_profile.RelatedObjectDoesNotExist:
-                    messages.error(request, 'This user is not a jobseeker and can not be deleted.')
+                    messages.error(request, 'This user is not a Mentee and can not be deleted.')
                     return render(request, 'delete_mentee.html', {'user_to_delete': user_to_delete})
                     
 
 
-                messages.success(request, 'Jobseeker deleted successfully!')
+                messages.success(request, 'Mentee deleted successfully!')
 
                 if request.user.is_mentor:
                     return redirect('dashboard_mentor')
@@ -492,7 +492,7 @@ def delete_mentee(request, user_id):
 
             
         except Exception as e:
-            messages.error(request, 'An error occurred while deleting the jobseeker. Try again later.')
+            messages.error(request, 'An error occurred while deleting the Mentee. Try again later.')
             return render(request, 'delete_mentee.html', {'user_to_delete': user_to_delete})
 
 
@@ -521,7 +521,7 @@ def delete_mentor(request, user_id):
         try:
             with transaction.atomic():
                 user_to_delete.delete()
-            messages.success(request, 'Your coach account has been deleted successfully!')
+            messages.success(request, 'Your Mentor account has been deleted successfully!')
             return redirect('home') 
 
         except Exception as e:
@@ -538,7 +538,7 @@ def delete_mentor(request, user_id):
 @require_http_methods(['GET','POST'])
 def update_menteeprofile(request):
     if request.user.is_mentor:
-        messages.error(request, 'Access denied. Only jobseeker can updated your profile.')
+        messages.error(request, 'Access denied. Only Mentee can updated your profile.')
         return redirect('login')
     
 
@@ -666,12 +666,12 @@ def update_menteeprofile(request):
                     
                 mentee_profile.save()
 
-                messages.success(request, 'Jobseeker profile updated successfully!')
+                messages.success(request, 'Mentee profile updated successfully!')
                 # Redirect to avoid form resubmission on refresh
                 return redirect('update_menteeprofile')
 
 
         except Exception as e:
-            logger.error(f"Error updating jobseeker profile for {request.user.email}: {str(e)}")
+            logger.error(f"Error updating Mentee profile for {request.user.email}: {str(e)}")
             messages.error(request, 'An unexpected error occurred. Please try again later.')
             return render(request, 'update_menteeprofile.html', context)
